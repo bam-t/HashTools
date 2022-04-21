@@ -32,7 +32,7 @@ namespace HashTools
 
         private void txtbx_fileHash_TextChanged(object sender, TextChangedEventArgs e)
         {
-            lbl_hashResult.Content = string.Empty;
+            txtblk_hashResult.Text = string.Empty;
             toggleButtonStatus(!string.IsNullOrWhiteSpace(txtbx_fileHash.Text));
         }
 
@@ -40,8 +40,10 @@ namespace HashTools
         {
             try
             {
-                lbl_hashResult.Content = string.Empty;
                 lbl_filePath.Content = string.Empty;
+                txtblk_run_algorithmType.Text = string.Empty;
+                txtblk_run_fileInfo.Text = string.Empty;
+                txtblk_hashResult.Text = string.Empty;
                 OpenFileDialog openFileDialog = new OpenFileDialog()
                 {
                     CheckFileExists = true,
@@ -61,16 +63,79 @@ namespace HashTools
             }
         }
 
-        private void btn_GenerateHash_Click(object sender, RoutedEventArgs e)
+        private async void btn_GenerateHash_Click(object sender, RoutedEventArgs e)
         {
-            
+            try
+            {
+                txtblk_run_algorithmType.Text = string.Empty;
+                txtblk_run_fileInfo.Text = string.Empty;
+                txtblk_hashResult.Text = string.Empty;
+                toggleButtonStatus(false);
+                toggleProgressStatus(true);
+                string filePath = lbl_filePath.Content as string;
+                if (string.IsNullOrWhiteSpace(filePath))
+                {
+                    MessageBox.Show("Invalid file path");
+                }
+                else if (!System.IO.File.Exists(filePath))
+                {
+                    MessageBox.Show("File doesn't exist at the specified path");
+                }
+                else
+                {
+                    string algorithm = string.Empty;
+                    if (rdibx_md4.IsChecked is true)
+                    {
+                        algorithm = "MD4";
+                    }
+                    else if (rdibx_md5.IsChecked is true)
+                    {
+                        algorithm = "MD5";
+                    }
+                    else if (rdibx_sha1.IsChecked is true)
+                    {
+                        algorithm = "SHA1";
+                    }
+                    else if (rdibx_sha256.IsChecked is true)
+                    {
+                        algorithm = "SHA256";
+                    }
+                    else if (rdibx_sha512.IsChecked is true)
+                    {
+                        algorithm = "SHA512";
+                    }
+                    var hash = await generateHashAsync(filePath, algorithm).ConfigureAwait(true);
+                    if (!string.IsNullOrWhiteSpace(hash))
+                    {
+                        txtblk_run_algorithmType.Text = algorithm;
+                        txtblk_run_fileInfo.Text = $" hash of {filePath}";
+                        txtblk_hashResult.Text = hash;
+                        txtblk_hashResult.Foreground = Brushes.Green;
+                        btn_copyFileHash.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        txtblk_hashResult.Text = "Failed to generate file hash!";
+                        txtblk_hashResult.Foreground = Brushes.Red;
+                        btn_copyFileHash.Visibility = Visibility.Hidden;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"There was an error: {ex.Message}");
+            }
+            toggleButtonStatus(true);
+            toggleProgressStatus(false);
         }
 
         private async void btn_verifyHash_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                lbl_hashResult.Content = string.Empty;
+                txtblk_run_algorithmType.Text = string.Empty;
+                txtblk_run_fileInfo.Text = string.Empty;
+                txtblk_hashResult.Text = string.Empty;
                 toggleButtonStatus(false);
                 toggleProgressStatus(true);
                 // TODO implement file hash format verification before processing
@@ -113,13 +178,13 @@ namespace HashTools
 
                     if (await isFileHashValidAsync(filePath, fileHash, algorithm).ConfigureAwait(true))
                     {
-                        lbl_hashResult.Content = "File hash is valid";
-                        lbl_hashResult.Foreground = Brushes.Green;
+                        txtblk_hashResult.Text = "File hash is valid";
+                        txtblk_hashResult.Foreground = Brushes.Green;
                     }
                     else
                     {
-                        lbl_hashResult.Content = "File hash is invalid";
-                        lbl_hashResult.Foreground = Brushes.Red;
+                        txtblk_hashResult.Text = "File hash is invalid";
+                        txtblk_hashResult.Foreground = Brushes.Red;
                     }
                 }
             }
@@ -129,6 +194,47 @@ namespace HashTools
             }
             toggleButtonStatus(true);
             toggleProgressStatus(false);
+        }
+
+        Task<string> generateHashAsync(string filePath, string algorithm)
+        {
+            TaskCompletionSource<string> tcs = new TaskCompletionSource<string>();
+            try
+            {
+                ProcessStartInfo psi = new ProcessStartInfo("certutil")
+                {
+                    Arguments = $"-hashfile \"{filePath}\" {algorithm}",
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true
+                };
+                string fileHash = string.Empty;
+                string processOutput = string.Empty;
+                using (Process p = new Process())
+                {
+                    p.StartInfo = psi;
+                    p.Start();
+                    processOutput = p.StandardOutput.ReadToEnd();
+                    p.WaitForExit();
+                }
+                if (!string.IsNullOrWhiteSpace(processOutput))
+                {
+                    var lines = processOutput.Split(new[] { '\r', '\n' });
+                    fileHash = lines.FirstOrDefault(hash => !string.IsNullOrWhiteSpace(hash) && !hash.Contains(" "));
+                }
+                else
+                {
+                    MessageBox.Show("There was an error. Please try again");
+                }
+                tcs.SetResult(fileHash);
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+
+            return tcs.Task;
         }
 
         Task<bool> isFileHashValidAsync(string filePath, string fileHash, string algorithm)

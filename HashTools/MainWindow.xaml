@@ -75,7 +75,8 @@
                    FontSize="10"
                    FontStyle="Italic"
                    Foreground="Teal" />
-            <StackPanel HorizontalAlignment="Center"
+            <StackPanel Margin="0 10 0 0"
+                        HorizontalAlignment="Center"
                         Orientation="Horizontal">
                 <Button x:Name="btn_GenerateHash"
                         Width="125"
@@ -94,9 +95,16 @@
                         Click="btn_verifyHash_Click"
                         Content="Verify" />
             </StackPanel>
-
+            <ProgressBar Name="prgs_status"
+                         Width="300px"
+                         Height="3px"
+                         Margin="0 15 0 0"
+                         BorderThickness="0"
+                         Foreground="#999999"
+                         IsIndeterminate="True"
+                         Visibility="Hidden" />
             <Label Name="lbl_hashResult"
-                   Margin="0 25 25 15"
+                   Margin="0 15 25 15"
                    HorizontalAlignment="Right"
                    Foreground="Green" />
         </StackPanel>

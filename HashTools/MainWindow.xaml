@@ -71,10 +71,9 @@
             <Label Name="lbl_filePath"
                    Margin="0 5 15 0"
                    HorizontalAlignment="Right"
-                   Content=""
                    FontSize="10"
                    FontStyle="Italic"
-                   Foreground="Teal" />
+                   Foreground="Gray" />
             <StackPanel Margin="0 10 0 0"
                         HorizontalAlignment="Center"
                         Orientation="Horizontal">
@@ -103,10 +102,42 @@
                          Foreground="#999999"
                          IsIndeterminate="True"
                          Visibility="Hidden" />
-            <Label Name="lbl_hashResult"
-                   Margin="0 15 25 15"
-                   HorizontalAlignment="Right"
-                   Foreground="Green" />
+            <TextBlock MaxWidth="445"
+                       Padding="10 0"
+                       HorizontalAlignment="Left"
+                       FontSize="10"
+                       TextWrapping="Wrap">
+                <Run Name="txtblk_run_algorithmType"
+                     FontWeight="Bold">
+                </Run>
+                <Run Name="txtblk_run_fileInfo">
+                </Run>
+            </TextBlock>
+            <StackPanel Margin="10 8 10 10"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                <TextBlock Name="txtblk_hashResult"
+                           MaxWidth="415"
+                           Margin="0 0 10 0"
+                           Padding="2"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Top"
+                           Cursor="IBeam"
+                           Foreground="Green"
+                           TextWrapping="Wrap">
+                </TextBlock>
+                <Button Name="btn_copyFileHash"
+                        Height="16"
+                        Margin="0"
+                        Padding="0"
+                        VerticalAlignment="Top"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        ToolTip="Copy File Hash"
+                        Visibility="Visible">
+                    <Image Source="assets/icons/copy-filled.png" />
+                </Button>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Window>

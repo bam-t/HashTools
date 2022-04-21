@@ -4,11 +4,101 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:HashTools"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        Title="MainWindow"
-        Width="800"
-        Height="450"
+        Title="Hash Tools"
+        Padding="20"
+        ResizeMode="CanMinimize"
+        SizeToContent="WidthAndHeight"
+        WindowStartupLocation="CenterScreen"
         mc:Ignorable="d">
     <Grid>
+        <StackPanel>
+            <StackPanel Margin="20 5"
+                        Orientation="Horizontal">
+                <Label HorizontalAlignment="Left"
+                       Content="Enter file hash below:"
+                       FontSize="9"
+                       FontStyle="Italic" />
 
+                <RadioButton x:Name="rdibx_md4"
+                             Margin="15 5 0 0"
+                             IsChecked="True">
+                    MD4
+                </RadioButton>
+                <RadioButton x:Name="rdibx_md5"
+                             Margin="10 5 0 0"
+                             IsChecked="True">
+                    MD5
+                </RadioButton>
+                <RadioButton x:Name="rdibx_sha1"
+                             Margin="10 5 0 0">
+                    Sha1
+                </RadioButton>
+                <RadioButton x:Name="rdibx_sha256"
+                             Margin="10 5 0 0">
+                    Sha256
+                </RadioButton>
+                <RadioButton x:Name="rdibx_sha512"
+                             Margin="10 5 0 0">
+                    Sha512
+                </RadioButton>
+            </StackPanel>
+            <TextBox x:Name="txtbx_fileHash"
+                     Width="350"
+                     Height="24"
+                     Margin="20 0"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Top"
+                     TextChanged="txtbx_fileHash_TextChanged">
+            </TextBox>
+            <StackPanel Margin="0 15 15 0"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                <Label Margin="0 0 50 0"
+                       HorizontalAlignment="Left"
+                       Content="You can also drag and drop file"
+                       FontSize="9"
+                       FontStyle="Italic"
+                       Foreground="Teal" />
+                <Label Content="Select File:"
+                       FontSize="11"
+                       FontStyle="Italic" />
+                <Button x:Name="btn_browseFile"
+                        Width="75"
+                        Margin="5 0"
+                        Click="btn_browseFile_Click"
+                        Content="Browse" />
+            </StackPanel>
+            <Label Name="lbl_filePath"
+                   Margin="0 5 15 0"
+                   HorizontalAlignment="Right"
+                   Content=""
+                   FontSize="10"
+                   FontStyle="Italic"
+                   Foreground="Teal" />
+            <StackPanel HorizontalAlignment="Center"
+                        Orientation="Horizontal">
+                <Button x:Name="btn_GenerateHash"
+                        Width="125"
+                        Margin="0 0 0 0"
+                        Padding="4"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Click="btn_GenerateHash_Click"
+                        Content="Generate Hash" />
+                <Button x:Name="btn_verifyHash"
+                        Width="125"
+                        Margin="15 0 0 0"
+                        Padding="4"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Click="btn_verifyHash_Click"
+                        Content="Verify" />
+            </StackPanel>
+
+            <Label Name="lbl_hashResult"
+                   Margin="0 25 25 15"
+                   HorizontalAlignment="Right"
+                   Foreground="Green" />
+        </StackPanel>
     </Grid>
 </Window>

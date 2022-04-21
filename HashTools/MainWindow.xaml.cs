@@ -30,6 +30,39 @@ namespace HashTools
             InitializeComponent();
         }
 
+        private void window_DragEnter(object sender, DragEventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void window_DragLeave(object sender, DragEventArgs e)
+        {
+            Cursor = Cursors.Arrow;
+        }
+
+        private void window_Drop(object sender, DragEventArgs e)
+        {
+            try
+            {
+                txtblk_run_algorithmType.Text = string.Empty;
+                txtblk_run_fileInfo.Text = string.Empty;
+                txtblk_hashResult.Text = string.Empty;
+                if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                {
+                    string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                    if (files.Any())
+                    {
+                        filePath = files[0];
+                        lbl_filePath.Content = filePath;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"There was an error: {ex.Message}");
+            }
+        }
+
         private void txtbx_fileHash_TextChanged(object sender, TextChangedEventArgs e)
         {
             txtblk_hashResult.Text = string.Empty;

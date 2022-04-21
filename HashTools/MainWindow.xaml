@@ -6,6 +6,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         Title="Hash Tools"
         Padding="20"
+        AllowDrop="True"
+        DragEnter="window_DragEnter"
+        DragLeave="window_DragLeave"
+        Drop="window_Drop"
         ResizeMode="CanMinimize"
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterScreen"
@@ -20,13 +24,11 @@
                        FontStyle="Italic" />
 
                 <RadioButton x:Name="rdibx_md4"
-                             Margin="15 5 0 0"
-                             IsChecked="True">
+                             Margin="15 5 0 0">
                     MD4
                 </RadioButton>
                 <RadioButton x:Name="rdibx_md5"
-                             Margin="10 5 0 0"
-                             IsChecked="True">
+                             Margin="10 5 0 0">
                     MD5
                 </RadioButton>
                 <RadioButton x:Name="rdibx_sha1"
@@ -34,7 +36,8 @@
                     Sha1
                 </RadioButton>
                 <RadioButton x:Name="rdibx_sha256"
-                             Margin="10 5 0 0">
+                             Margin="10 5 0 0"
+                             IsChecked="True">
                     Sha256
                 </RadioButton>
                 <RadioButton x:Name="rdibx_sha512"

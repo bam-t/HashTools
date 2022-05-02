@@ -301,6 +301,12 @@ namespace HashTools
             toggleProgressStatus(false);    // hide progress bar 
         }
 
+        private void btn_copyFileHash_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(txtblk_hashResult.Text))
+                Clipboard.SetText(txtblk_hashResult.Text);
+        }
+
         void toggleButtonStatus(bool isEnabled)
         {
             btn_browseFile.IsEnabled = isEnabled;

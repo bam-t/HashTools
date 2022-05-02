@@ -156,6 +156,7 @@
                         VerticalAlignment="Top"
                         Background="Transparent"
                         BorderThickness="0"
+                        Click="btn_copyFileHash_Click"
                         ToolTip="Copy File Hash"
                         Visibility="Hidden">
                     <Viewbox>

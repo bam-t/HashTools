@@ -122,7 +122,6 @@ namespace HashTools
         private void txtbx_fileHash_TextChanged(object sender, TextChangedEventArgs e)
         {
             // clear status indication texts
-            txtblk_filePath.Text = string.Empty;
             txtblk_run_algorithmType.Text = string.Empty;
             txtblk_run_fileInfo.Text = string.Empty;
             txtblk_hashResult.Text = string.Empty;

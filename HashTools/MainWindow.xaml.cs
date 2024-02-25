@@ -208,7 +208,7 @@ namespace HashTools
                         // display generated file hash details
                         txtblk_run_algorithmType.Text = algorithm;
                         txtblk_run_fileInfo.Text = $" hash of {filePath}";
-                        txtblk_hashResult.Text = hash;
+                        txtblk_hashResult.Text = hash.ToUpper();
                         txtblk_hashResult.Foreground = Brushes.Green;
                         btn_copyFileHash.Visibility = Visibility.Visible;
                     }
@@ -624,9 +624,7 @@ namespace HashTools
         /// <returns>Returns the calculated file hash. An empty string will be returned if calculation failed.</returns>
         Task<string> generateHashAsync(string filePath, string algorithm)
         {
-            // use a task completion source to run IO bound processes
-            TaskCompletionSource<string> tcs = new TaskCompletionSource<string>();
-            try
+            return Task.Run(() =>
             {
                 // prepare the information used to start the certutil process
                 ProcessStartInfo psi = new ProcessStartInfo("certutil")
@@ -639,9 +637,9 @@ namespace HashTools
                 };
                 string fileHash = string.Empty;
                 string processOutput = string.Empty;
-                using (Process p = new Process())   
+                using (Process p = new Process())
                 {
-                    p.StartInfo = psi;  
+                    p.StartInfo = psi;
                     p.Start();      // start the certutil process
                     processOutput = p.StandardOutput.ReadToEnd();       // read the output of the certutil process
                     p.WaitForExit();        // wait for the process to exit
@@ -657,14 +655,52 @@ namespace HashTools
                 {
                     MessageBox.Show("There was an error. Please try again");
                 }
-                tcs.SetResult(fileHash);
-            }
-            catch (Exception ex)
-            {
-                tcs.SetException(ex);
-            }
 
-            return tcs.Task;
+                return fileHash;
+            });
+
+
+            //// use a task completion source to run IO bound processes
+            //TaskCompletionSource<string> tcs = new TaskCompletionSource<string>();
+            //try
+            //{
+            //    // prepare the information used to start the certutil process
+            //    ProcessStartInfo psi = new ProcessStartInfo("certutil")
+            //    {
+            //        Arguments = $"-hashfile \"{filePath}\" {algorithm}",
+            //        CreateNoWindow = true,
+            //        UseShellExecute = false,
+            //        RedirectStandardError = true,     // to get the error from the process
+            //        RedirectStandardOutput = true     // to get the output from the process
+            //    };
+            //    string fileHash = string.Empty;
+            //    string processOutput = string.Empty;
+            //    using (Process p = new Process())   
+            //    {
+            //        p.StartInfo = psi;  
+            //        p.Start();      // start the certutil process
+            //        processOutput = p.StandardOutput.ReadToEnd();       // read the output of the certutil process
+            //        p.WaitForExit();        // wait for the process to exit
+            //    }
+            //    if (!string.IsNullOrWhiteSpace(processOutput))      // check if the output form the certutil process is not empty
+            //    {
+            //        var lines = processOutput.Split(new[] { '\r', '\n' });      // split the output by lines
+            //        // the line that contains the file hash will not have any space in it
+            //        // so use that condition to get the file hash
+            //        fileHash = lines.FirstOrDefault(hash => !string.IsNullOrWhiteSpace(hash) && !hash.Contains(" "));
+            //    }
+            //    else
+            //    {
+            //        MessageBox.Show("There was an error. Please try again");
+            //    }
+            //    tcs.SetResult(fileHash);
+            //}
+            //catch (Exception ex)
+            //{
+            //    tcs.SetException(ex);
+            //}
+
+            //return tcs.Task;
         }
 
         /// <summary>
@@ -681,7 +717,7 @@ namespace HashTools
             {
                 ProcessStartInfo psi = new ProcessStartInfo("certutil")
                 {
-                    Arguments = $"-hashfile {filePath} {algorithm}",
+                    Arguments = $"-hashfile \"{filePath}\" {algorithm}",
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardError = true,
@@ -699,7 +735,7 @@ namespace HashTools
                 if (!string.IsNullOrWhiteSpace(processOutput))
                 {
                     var lines = processOutput.Split(new[] { '\r', '\n' });
-                    isValid = lines.Any(hash => string.Equals(hash, fileHash, StringComparison.OrdinalIgnoreCase));
+                    isValid = lines.Any(hash => string.Equals(hash.ToLower(), fileHash.ToLower(), StringComparison.OrdinalIgnoreCase));
                 }
                 else
                 {
